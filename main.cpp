@@ -2,26 +2,18 @@
 #include <fstream>
 #include <sstream>
 #include <time.h>
-const long int TAM = 100000;
 using namespace std;
 
+//Função que gera o número aleatório
 inline unsigned long long int RandD(unsigned long long int x){
-    unsigned long long int a = 2685821657736338717;
+    unsigned long long int a = 2685821657736338717; //multiplicador
     x = x * a;
     return x >> 32;
 }
 
-int main() {
-    unsigned long long int x = time(NULL);
-    int v[TAM];
-    int proba[40];
-    string tempe[40];
-    int intervalos[41];
-    int m[2][40];
+//Transfera as probabilidades do txt para um vetor
+void leituraProbabilidades(int *probabilidades){
     string line;
-    int num;
-    int auxL;
-
     ifstream prob;
     prob.open("pProbabilidades.txt");
 
@@ -31,39 +23,60 @@ int main() {
         stringstream aux(line);
         int nAux;
         aux >> nAux;
-        proba[i] = nAux;
+        probabilidades[i] = nAux;
         i++;
     }
     prob.close();
+}
 
+//Transfere as temperaturas do txt para um vetor
+void leituraTemperaturas(string *temperaturas){
+    string line;
     ifstream temp;
     temp.open("pMedias.txt");
 
-    i = 0;
+    int i = 0;
     while (!temp.eof()){
         getline(temp, line);
-        tempe[i] = line;
+        temperaturas[i] = line;
         i++;
     }
     temp.close();
+}
 
+//Cria os intervalos usados na simulação
+void criacaoIntervalos(int *intervalos, int *probabilidades){
+    int aux = 0;
     intervalos[40] = -1;
-    int pX = 0;
     for (int i = 39; i >=0; i--){
-        pX = proba[i] + pX;
-        intervalos[i] = pX;
+        aux = probabilidades[i] + aux;
+        intervalos[i] = aux;
     }
+}
+
+int main() {
+    unsigned long long int x = time(NULL); //semente do gerador
+    int probabilidades[40];                //guarda as probabilidades lidas do txt
+    string temperaturas[40];               //guarda as temperaturas lidas do txt
+    int intervalos[41];                    //guarda os intervalos obtidos usando as probabilidades
+    int numLeitura;                        //guarda quantas temepraturas serão simuladas
+    int num;                               //recebe o valor aleatório do gerada no intervalo 0 - 10000000
+
+    leituraProbabilidades(probabilidades);
+    leituraTemperaturas(temperaturas);
+
+    criacaoIntervalos(intervalos, probabilidades);
 
     cout << "Informe o numero de meses: \n";
-    cin >> auxL;
+    cin >> numLeitura;
 
-    for (int i = 0; i < auxL; i++){
+    for (int i = 0; i < numLeitura; i++){
         x = RandD(x);
         num = x % 10000000;
 
         for (int j = 0; j < 40; j ++){
             if (num <= intervalos[j] && num > intervalos[j+1]){
-                cout << tempe[j] << endl;
+                cout << temperaturas[j] << " - " << (float) probabilidades[j] / 10000000 << "%" << endl;
             }
         }
     }
