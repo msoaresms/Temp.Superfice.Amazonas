@@ -77,6 +77,7 @@ int main() {
         for (int j = 0; j < 40; j ++){
             if (num <= intervalos[j] && num > intervalos[j+1]){
                 cout << temperaturas[j] << " - " << (float) probabilidades[j] / 10000000 << "%" << endl;
+                break;
             }
         }
     }
