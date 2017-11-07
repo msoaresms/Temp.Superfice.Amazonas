@@ -11,7 +11,7 @@ inline unsigned long long int RandD(unsigned long long int x){
     return x >> 32;
 }
 
-//Transfera as probabilidades do txt para um vetor
+//Transfere as probabilidades do txt para um vetor
 void leituraProbabilidades(int *probabilidades){
     string line;
     ifstream prob;
